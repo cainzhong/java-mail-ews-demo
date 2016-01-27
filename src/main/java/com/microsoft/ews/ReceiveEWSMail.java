@@ -63,7 +63,7 @@ public class ReceiveEWSMail {
     SearchFilter.ContainsSubstring fromTermFilter = new SearchFilter.ContainsSubstring(EmailMessageSchema.From, fromStringTerm);
     SearchFilter.ContainsSubstring subjectFilter = new SearchFilter.ContainsSubstring(ItemSchema.Subject, subjectTerm, ContainmentMode.Substring, ComparisonMode.IgnoreCase);
 
-    FindItemsResults<Item> findResults = service.findItems(WellKnownFolderName.Inbox, new SearchFilter.SearchFilterCollection(LogicalOperator.Or, fromTermFilter, subjectFilter), view);
+    FindItemsResults<Item> findResults = service.findItems(WellKnownFolderName.Inbox, new SearchFilter.SearchFilterCollection(LogicalOperator.And, fromTermFilter, subjectFilter), view);
 
     System.out.println("Total number of items found: " + findResults.getTotalCount());
     List msgDataList = new ArrayList();
@@ -86,6 +86,7 @@ public class ReceiveEWSMail {
     try {
       Item itm = Item.bind(service, itemId, PropertySet.FirstClassProperties);
       EmailMessage emailMessage = EmailMessage.bind(service, itm.getId());
+
       messageData.put("emailItemId", emailMessage.getId().toString());
       messageData.put("subject", emailMessage.getSubject().toString());
       messageData.put("fromAddress", emailMessage.getFrom().getAddress().toString());
